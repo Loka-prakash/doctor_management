@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.doctor import Doctor
 from app.schemas.doctor import DoctorCreate
-
+from fastapi import HTTPException
 def create_doctor(db: Session, doctor: DoctorCreate):
     db_doctor = Doctor(**doctor.model_dump())
     db.add(db_doctor)
@@ -36,8 +36,11 @@ def delete_doctor(db: Session, doctor_id: int):
     doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
 
     if not doctor:
-        return {"error": "Doctor not found"}
-
+        raise HTTPException(
+    status_code=404,
+    detail="Doctor not found"
+)
+ 
     db.delete(doctor)
     db.commit()
 
